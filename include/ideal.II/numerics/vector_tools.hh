@@ -337,6 +337,21 @@ namespace idealii::slab::VectorTools
             dealii::Vector<double> &spacetime_vector ,
             dealii::Function<dim,double> &exact_solution ,
             spacetime::Quadrature<dim> &quad );
+
+    /**
+     * @brief calculate the L2 inner product of (u-u_{kh}) with itself
+     * @parameter dof_handler The slab::DoFHandler describing the dof distribution of the space-time vector
+     * @parameter spacetime_vector The approximate solution u_{kh} as a Trilinos vector
+     * @parameter exact_solution The function describing the exact solution
+     * @parameter quad The quadrature formula to use when calculating the integrals.
+     */
+    template<int dim>
+    double
+    calculate_L2L2_squared_error_on_slab (
+            slab::DoFHandler<dim> &dof_handler ,
+            dealii::TrilinosWrappers::MPI::Vector &spacetime_vector ,
+            dealii::Function<dim,double> &exact_solution ,
+            spacetime::Quadrature<dim> &quad );
 }
 
 #endif /* INCLUDE_IDEAL_II_VECTOR_TOOLS_HH_ */

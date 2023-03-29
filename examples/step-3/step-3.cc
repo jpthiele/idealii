@@ -171,6 +171,8 @@ private:
     dealii::TrilinosWrappers::MPI::Vector slab_system_rhs;
     dealii::TrilinosWrappers::MPI::Vector slab_initial_value;
     unsigned int slab;
+    double norm_sqr;
+    unsigned int n_dofs_total;
     // For initial and Dirichlet boundary values it is simplest
     // to use the exact solution if known.
     ExactSolution exact_solution;
@@ -211,6 +213,8 @@ Step3::Step3 ( unsigned int spatial_degree , unsigned int temporal_degree )
              temporal_degree ,
              idealii::spacetime::DG_FiniteElement < 2 > ::support_type::Legendre ),
         slab ( 0 ),
+        norm_sqr ( 0 ),
+        n_dofs_total ( 0 ),
         exact_solution ()
 {
 }
@@ -226,9 +230,9 @@ void Step3::make_grid ()
     //construct an MPI parallel triangulation with the provided MPI communicator
     auto space_tria = std::make_shared< dealii::parallel::distributed::Triangulation< 2 >> ( mpi_comm );
     dealii::GridGenerator::hyper_cube ( *space_tria );
-    const unsigned int M = 5;
+    const unsigned int M = 200;
     triangulation.generate ( space_tria , M );
-    triangulation.refine_global ( 4 , 0 );
+    triangulation.refine_global ( 5 , 0 );
     dof_handler.generate ();
 }
 
@@ -242,9 +246,13 @@ void Step3::time_marching ()
     slab_its.dof = dof_handler.begin ();
     slab_its.solution = solution.begin ();
     slab = 0;
+    norm_sqr = 0;
+    n_dofs_total = 0;
     tic.add_iterator ( &slab_its.tria , &triangulation );
     tic.add_iterator ( &slab_its.dof , &dof_handler );
     tic.add_iterator ( &slab_its.solution , &solution );
+    idealii::spacetime::QGauss<2> quad(fe.spatial()->degree+2,fe.temporal()->degree+2);
+
     pout << "*******Starting time-stepping*********" << std::endl;
     for ( ; !tic.at_end () ; tic.increment () )
     {
@@ -256,23 +264,26 @@ void Step3::time_marching ()
         assemble_system_on_slab ();
         solve_system_on_slab ();
         output_results_on_slab ();
+        // Here we calculate the squared L2L2 error over the current slab 
+        // i.e. ((u-u_{kh},u-u_{kh}))_{L2(I_m\times\Omega)} 
+        norm_sqr += idealii::slab::VectorTools::calculate_L2L2_squared_error_on_slab(
+            *slab_its.dof, *slab_its.solution, exact_solution, quad
+        );
         idealii::slab::VectorTools::extract_subvector_at_time_point ( *slab_its.dof ,
                                                                       *slab_its.solution ,
                                                                       slab_initial_value ,
                                                                       slab_its.tria->endpoint () );
         slab++;
     }
+    pout << "Total number of DoFs: " << n_dofs_total
+         << "\nL2-error: " << std::sqrt(norm_sqr)
+         << std::endl;
 }
 
 void Step3::setup_system_on_slab ()
 {
     slab_its.dof->distribute_dofs ( fe );
-    pout << "Number of degrees of freedom: \n\t"
-         << slab_its.dof->n_dofs_space () << " (space) * "
-         << slab_its.dof->n_dofs_time ()  << " (time) = "
-         << slab_its.dof->n_dofs_spacetime ()
-         << std::endl;
-
+    n_dofs_total += slab_its.dof->n_dofs_spacetime();
     // we need to know the spatial set of degrees of freedom owned by the current MPI processor
     space_locally_owned_dofs = slab_its.dof->spatial ()->locally_owned_dofs ();
     // and beloging to elements owned by the processor
@@ -315,7 +326,7 @@ void Step3::setup_system_on_slab ()
     idealii::slab::VectorTools::interpolate_boundary_values ( space_locally_relevant_dofs ,
                                                               *slab_its.dof ,
                                                               0 ,
-                                                              zero ,
+                                                              exact_solution ,
                                                               slab_constraints );
 
     slab_constraints->close ();
