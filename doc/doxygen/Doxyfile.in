@@ -16,14 +16,14 @@ PROJECT_NAME           = "ideal.II"
 
 CASE_SENSE_NAMES       = YES
 
-HTML_EXTRA_FILES = @CMAKE_CURRENT_BINARY_DIR@/Readme.md
+HTML_EXTRA_FILES = @CMAKE_CURRENT_BINARY_DIR@/README.md
 
-INPUT =  @CMAKE_CURRENT_BINARY_DIR@/Readme.md
+INPUT =  @CMAKE_CURRENT_BINARY_DIR@/README.md
 INPUT += @CMAKE_CURRENT_SOURCE_DIR@/../../include
 FILE_PATTERNS          = *.hh
 RECURSIVE              = YES
 SHOW_NAMESPACES = YES
-USE_MDFILE_AS_MAINPAGE = Readme.md
+USE_MDFILE_AS_MAINPAGE = README.md
 
 # These variables are used to only offer certain functionality
 # if the base functionality is supplied by the current deal.II installation

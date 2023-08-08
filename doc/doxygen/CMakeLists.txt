@@ -29,7 +29,7 @@ if(IDEAL_II_DOCUMENTATION)
 			COMMENT "Generating Doxygen documentation"
 			VERBATIM )
 			
-                file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/../../Readme.md
+                file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/../../README.md
                     DESTINATION ${CMAKE_CURRENT_BINARY_DIR})  
                 
 	else()
