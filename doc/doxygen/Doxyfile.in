@@ -30,7 +30,7 @@ USE_MDFILE_AS_MAINPAGE = README.md
 # To ensure that these are shown in the documentation anyway the macros have to be set
 # as predefined
 
-
+MARKDOWN_SUPPORT       = YES
 ENABLE_PREPROCESSING   = YES
 MACRO_EXPANSION        = YES
 EXPAND_ONLY_PREDEF     = YES
