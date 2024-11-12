@@ -23,20 +23,38 @@ namespace idealii::spacetime
 
 
     template void FEValues<2>::get_function_values(const dealii::Vector<double>&,
+                                                   std::vector<double>&) const;
+
+    template void FEValues<2>::get_function_values(const dealii::Vector<double>&,
                                                    std::vector<dealii::Vector<double>>&) const;
+
+    template void FEValues<3>::get_function_values(const dealii::Vector<double> &,
+                                                   std::vector<double> &) const;
 
     template void FEValues<3>::get_function_values(const dealii::Vector<double> &,
                                                    std::vector<dealii::Vector<double>> &) const;
 
     template void FEValues<2>::get_function_dt(const dealii::Vector<double>&,
+                                                   std::vector<double>&) const;
+
+    template void FEValues<2>::get_function_dt(const dealii::Vector<double>&,
                                                    std::vector<dealii::Vector<double>>&) const;
+
+    template void FEValues<3>::get_function_dt(const dealii::Vector<double> &,
+                                                   std::vector<double> &) const;
 
     template void FEValues<3>::get_function_dt(const dealii::Vector<double> &,
                                                    std::vector<dealii::Vector<double>> &) const;
 
     template void FEValues<2>::get_function_space_gradients(const dealii::Vector<double>&,
+                                                   std::vector<dealii::Tensor<1,2,double>>&) const;
+
+    template void FEValues<2>::get_function_space_gradients(const dealii::Vector<double>&,
                                                    std::vector<std::vector<dealii::Tensor<1,2,double>>>&) const;
 
+    template void FEValues<3>::get_function_space_gradients(const dealii::Vector<double> &,
+                                                   std::vector<dealii::Tensor<1,3,double>>&) const;
+                                                   
     template void FEValues<3>::get_function_space_gradients(const dealii::Vector<double> &,
                                                    std::vector<std::vector<dealii::Tensor<1,3,double>>>&) const;
 
@@ -73,14 +91,26 @@ namespace idealii::spacetime
 
 
     template void FEJumpValues<2>::get_function_values_plus(const dealii::Vector<double>&,
+                                                        std::vector<double>&) const;
+
+    template void FEJumpValues<2>::get_function_values_plus(const dealii::Vector<double>&,
                                                         std::vector<dealii::Vector<double>>&) const;
 
+    template void FEJumpValues<2>::get_function_values_minus(const dealii::Vector<double>&,
+                                                         std::vector<double>&) const;
+   
     template void FEJumpValues<2>::get_function_values_minus(const dealii::Vector<double>&,
                                                          std::vector<dealii::Vector<double>>&) const;
 
     template void FEJumpValues<3>::get_function_values_plus(const dealii::Vector<double> &,
+                                                        std::vector<double> &) const;
+
+    template void FEJumpValues<3>::get_function_values_plus(const dealii::Vector<double> &,
                                                         std::vector<dealii::Vector<double>> &) const;
 
+    template void FEJumpValues<3>::get_function_values_minus(const dealii::Vector<double> &,
+                                                         std::vector<double> &) const;
+    
     template void FEJumpValues<3>::get_function_values_minus(const dealii::Vector<double> &,
                                                          std::vector<dealii::Vector<double>> &) const;
 

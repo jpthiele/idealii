@@ -74,11 +74,25 @@ namespace idealii::slab
         spatial ();
 
         /**
+         * @brief The underlying spatial dof handler.
+         * @return A shared pointer to the spatial dof handler.
+         */
+        std::shared_ptr<const dealii::DoFHandler<dim>>
+        spatial () const;
+
+        /**
          * @brief The underlying temporal dof handler.
          * @return A shared pointer to the temporal dof handler.
          */
         std::shared_ptr<dealii::DoFHandler<1>>
         temporal ();
+
+        /**
+         * @brief The underlying temporal dof handler.
+         * @return A shared pointer to the temporal dof handler.
+         */
+        std::shared_ptr<const dealii::DoFHandler<1>>
+        temporal () const;
 
         /**
          * @brief Distribute DoFs in space and time.
@@ -97,21 +111,21 @@ namespace idealii::slab
          * @return The total number of space-time dofs, i.e. n_dofs_space()*n_dofs_time().
          */
         unsigned int
-        n_dofs_spacetime ();
+        n_dofs_spacetime () const ;
         /**
          * @brief Number of spatial degrees of fredom on this slab.
          *
          * @return The number of dofs based on the spatial finite element and triangulation.
          */
         unsigned int
-        n_dofs_space ();
+        n_dofs_space () const;
         /**
          * @brief Number of temporal degrees of fredom on this slab.
          *
          * @return The number of dofs based on the temporal finite element and  triangulation.
          */
         unsigned int
-        n_dofs_time ();
+        n_dofs_time () const;
 
         /**
          * @brief Number of temporal dofs in a single element/interval.
@@ -119,7 +133,7 @@ namespace idealii::slab
          * @return The number of temporal dofs i.e. (r+1) for dG(r) elements.
          */
         unsigned int
-        dofs_per_cell_time ();
+        dofs_per_cell_time () const;
 
         /**
          * @brief The underlying support type used for constructing the temporal finite element.
@@ -127,7 +141,7 @@ namespace idealii::slab
          * @return The spacetime::DG_FiniteElement<dim>::support_type of the underlying finite element.
          */
         typename spacetime::DG_FiniteElement<dim>::support_type
-        fe_support_type ();
+        fe_support_type () const;
 
         /**
          * @brief Return the set of processor local dofs.
@@ -141,7 +155,7 @@ namespace idealii::slab
          * @return An IndexSet of the global dof indices owned by the current core.
          */
         const dealii::IndexSet&
-        locally_owned_dofs ();
+        locally_owned_dofs () const;
 
     private:
         std::shared_ptr<dealii::DoFHandler<dim>> _spatial_dof;

@@ -63,7 +63,7 @@ namespace idealii::spacetime
     {
         _fev_time->reinit ( cell_time );
         cell_time->get_dof_indices ( local_time_dof_index );
-        time_cell_index = cell_time->index ();
+        time_cell_index = cell_time->index();
     }
 
     template<int dim>
@@ -97,6 +97,38 @@ namespace idealii::spacetime
                                         point_no % n_quads_space )
              * _fev_time->shape_value ( function_no / n_dofs_space_cell ,
                                         point_no / n_quads_space );
+    }
+
+    template<int dim>
+    template<class InputVector>
+    void FEValues<dim>::get_function_values (
+        const InputVector &fe_function ,
+        std::vector<typename InputVector::value_type> &values
+    ) const
+    {
+        Assert ( values.size () == n_quadrature_points ,
+                 dealii::ExcDimensionMismatch ( values.size () , n_quadrature_points )
+        );
+        double phi_x;
+        unsigned int q = 0;
+
+        for ( unsigned int q_x = 0 ; q_x < n_quads_space ; ++q_x )
+        {
+            for ( unsigned int i_x = 0 ; i_x < n_dofs_space_cell ; ++i_x )
+            {
+                phi_x = _fev_space->shape_value_component ( i_x , q_x , 0 );
+                for ( unsigned int q_t = 0 ; q_t < _fev_time->n_quadrature_points ; ++q_t )
+                {
+                    q = q_x + n_quads_space * q_t;
+                    for ( unsigned int i_t = 0 ; i_t < _fev_time->dofs_per_cell ; ++i_t )
+                    {
+                        values[q] +=
+                           phi_x * _fev_time->shape_value ( i_t , q_t )
+                           * fe_function[local_space_dof_index[i_x] + n_dofs_space * local_time_dof_index[i_t]];
+                    }
+                }
+            }
+        }
     }
 
     template<int dim>
@@ -146,6 +178,38 @@ namespace idealii::spacetime
     template<class InputVector>
     void FEValues<dim>::get_function_dt (
         const InputVector &fe_function ,
+        std::vector<typename InputVector::value_type> &values ) const
+    {
+        Assert ( values.size () == n_quadrature_points ,
+                 dealii::ExcDimensionMismatch ( values.size () , n_quadrature_points )
+        );
+        double phi_x;
+        unsigned int q = 0;
+
+        for ( unsigned int q_x = 0 ; q_x < n_quads_space ; ++q_x )
+        {
+            for ( unsigned int i_x = 0 ; i_x < n_dofs_space_cell ; ++i_x )
+            {
+                phi_x = _fev_space->shape_value_component ( i_x , q_x , 0 );
+                for ( unsigned int q_t = 0 ; q_t < _fev_time->n_quadrature_points ; ++q_t )
+                {
+                    q = q_x + n_quads_space * q_t;
+                    for ( unsigned int i_t = 0 ; i_t < _fev_time->dofs_per_cell ; ++i_t )
+                    {
+                        values[q] +=
+                                phi_x * _fev_time->shape_grad ( i_t , q_t )[0]
+                                * fe_function[local_space_dof_index[i_x] + n_dofs_space * local_time_dof_index[i_t]];
+                    }
+                }
+            }
+        }
+    }
+
+
+    template<int dim>
+    template<class InputVector>
+    void FEValues<dim>::get_function_dt (
+        const InputVector &fe_function ,
         std::vector<dealii::Vector<typename InputVector::value_type>> &values ) const
     {
         Assert ( values.size () == n_quadrature_points ,
@@ -177,6 +241,44 @@ namespace idealii::spacetime
                         values[q] ( comp_i_x ) +=
                                 phi_x * _fev_time->shape_grad ( i_t , q_t )[0]
                                 * fe_function[local_space_dof_index[i_x] + n_dofs_space * local_time_dof_index[i_t]];
+                    }
+                }
+            }
+        }
+    }
+
+    template<int dim>
+    template<class InputVector>
+    void FEValues<dim>::get_function_space_gradients (
+        const InputVector &fe_function ,
+        std::vector<dealii::Tensor<1,dim,typename InputVector::value_type>> &gradients ) const
+    {
+        Assert ( gradients.size () == n_quadrature_points ,
+                 dealii::ExcDimensionMismatch ( gradients.size () , n_quadrature_points )
+        );
+        dealii::Tensor<1,dim,double> grad_phi_x;
+        unsigned int q = 0;
+
+        for ( unsigned int q = 0 ; q < n_quadrature_points ; ++q )
+        {
+            gradients[q] = 0;
+        }
+
+        double u_i = 0;
+        for ( unsigned int q_x = 0 ; q_x < n_quads_space ; ++q_x )
+        {
+            for ( unsigned int i_x = 0 ; i_x < n_dofs_space_cell ; ++i_x )
+            {
+                grad_phi_x = _fev_space->shape_grad_component ( i_x , q_x , 0 );
+                for ( unsigned int q_t = 0 ; q_t < _fev_time->n_quadrature_points ; ++q_t )
+                {
+                    q = q_x + n_quads_space * q_t;
+                    for ( unsigned int i_t = 0 ; i_t < _fev_time->dofs_per_cell ; ++i_t )
+                    {
+                        u_i = fe_function[local_space_dof_index[i_x] + n_dofs_space * local_time_dof_index[i_t]];
+                        gradients[q] += grad_phi_x
+                                                  * _fev_time->shape_value ( i_t , q_t )
+                                                  * u_i;
                     }
                 }
             }
@@ -434,6 +536,31 @@ namespace idealii::spacetime
     template<class InputVector>
     void FEJumpValues<dim>::get_function_values_plus(
         const InputVector& fe_function,
+        std::vector<typename InputVector::value_type>& values) const
+    {
+        unsigned int n_quads_space = _fev_space->n_quadrature_points;
+        Assert(values.size() == n_quads_space,
+               dealii::ExcDimensionMismatch(values.size(),n_quads_space)
+        );
+
+        double phi_x;
+
+        for (unsigned int q_x = 0 ; q_x < n_quads_space ; ++q_x){
+            for ( unsigned int i_x = 0 ; i_x < _fe.spatial()->dofs_per_cell ; ++i_x ){
+                phi_x = _fev_space->shape_value_component ( i_x , q_x , 0 );
+                for ( unsigned int i_t = 0 ; i_t < _fev_time->dofs_per_cell ; ++i_t ){
+                    values[q_x]
+                        += phi_x * _fev_time->shape_value( i_t , 0 )
+                         * fe_function[local_space_dof_index[i_x]+n_dofs_space*local_time_dof_index[i_t]];
+                }
+            }
+        }
+    }
+
+    template<int dim>
+    template<class InputVector>
+    void FEJumpValues<dim>::get_function_values_plus(
+        const InputVector& fe_function,
         std::vector<dealii::Vector<typename InputVector::value_type>>& values) const
     {
         unsigned int n_quads_space = _fev_space->n_quadrature_points;
@@ -458,6 +585,31 @@ namespace idealii::spacetime
                 for ( unsigned int i_t = 0 ; i_t < _fev_time->dofs_per_cell ; ++i_t ){
                     values[q_x](comp_i_x)
                         += phi_x * _fev_time->shape_value( i_t , 0 )
+                         * fe_function[local_space_dof_index[i_x]+n_dofs_space*local_time_dof_index[i_t]];
+                }
+            }
+        }
+    }
+
+    template<int dim>
+    template<class InputVector>
+    void FEJumpValues<dim>::get_function_values_minus(
+        const InputVector& fe_function,
+        std::vector<typename InputVector::value_type>& values) const
+    {
+        unsigned int n_quads_space = _fev_space->n_quadrature_points;
+        Assert(values.size() == n_quads_space,
+               dealii::ExcDimensionMismatch(values.size(),n_quads_space)
+        );
+
+        double phi_x;
+
+        for (unsigned int q_x = 0 ; q_x < n_quads_space ; ++q_x){
+            for ( unsigned int i_x = 0 ; i_x < _fe.spatial()->dofs_per_cell ; ++i_x ){
+                phi_x = _fev_space->shape_value_component ( i_x , q_x , 0 );
+                for ( unsigned int i_t = 0 ; i_t < _fev_time->dofs_per_cell ; ++i_t ){
+                    values[q_x]
+                        += phi_x * _fev_time->shape_value( i_t , 1 )
                          * fe_function[local_space_dof_index[i_x]+n_dofs_space*local_time_dof_index[i_t]];
                 }
             }

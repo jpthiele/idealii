@@ -88,6 +88,17 @@ namespace idealii::spacetime
             dealii::Tensor<1,dim> shape_space_grad ( unsigned int function_no ,
                                                      unsigned int point_no );
 
+
+            /**
+             * @brief Scalar function values of a given vector at all quadrature points
+             * @in fe_function
+             * @out values
+             */
+            template<class InputVector>
+            void get_function_values(const InputVector& fe_function,
+                                     std::vector<typename InputVector::value_type>& values)
+            const;
+
             /**
              * @brief Function values of a given vector at all quadrature points
              * @in fe_function
@@ -98,6 +109,17 @@ namespace idealii::spacetime
                                      std::vector<dealii::Vector<typename InputVector::value_type>>& values)
             const;
 
+
+            /**
+             * @brief Scalar function values of a given vector at all quadrature points
+             * @in fe_function
+             * @out values
+             */
+            template<class InputVector>
+            void get_function_dt(const InputVector& fe_function,
+                                 std::vector<typename InputVector::value_type>& values)
+            const;
+
             /**
              * @brief Function values of a given vector at all quadrature points
              * @in fe_function
@@ -106,6 +128,16 @@ namespace idealii::spacetime
             template<class InputVector>
             void get_function_dt(const InputVector& fe_function,
                                  std::vector<dealii::Vector<typename InputVector::value_type>>& values)
+            const;
+
+            /**
+             * @brief Spatial function gradients of a given vector at all quadrature points
+             * @in fe_function
+             * @out values
+             */
+            template<class InputVector>
+            void get_function_space_gradients(const InputVector& fe_function,
+                                              std::vector<dealii::Tensor<1,dim,typename InputVector::value_type>>& gradients)
             const;
 
             /**
@@ -341,6 +373,16 @@ namespace idealii::spacetime
                                        unsigned int point_no );
 
             /**
+             * @brief Left temporal limit from below of scalar function values of a given vector at all space quadrature points
+             * @in fe_function
+             * @out values
+             */
+            template<class InputVector>
+            void get_function_values_minus(const InputVector& fe_function,
+                                     std::vector<typename InputVector::value_type>& values)
+            const;
+
+            /**
              * @brief Left temporal limit from below of function values of a given vector at all space quadrature points
              * @in fe_function
              * @out values
@@ -348,6 +390,16 @@ namespace idealii::spacetime
             template<class InputVector>
             void get_function_values_minus(const InputVector& fe_function,
                                      std::vector<dealii::Vector<typename InputVector::value_type>>& values)
+            const;
+
+            /**
+             * @brief Left temporal limit from above of scalar function values of a given vector at all space quadrature points
+             * @in fe_function
+             * @out values
+             */
+            template<class InputVector>
+            void get_function_values_plus(const InputVector& fe_function,
+                                     std::vector<typename InputVector::value_type>& values)
             const;
 
             /**

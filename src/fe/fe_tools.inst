@@ -1,0 +1,113 @@
+// ---------------------------------------------------------------------
+//
+// Copyright (C) 2022 - 2023 by the ideal.II authors
+//
+// This file is part of the ideal.II library.
+//
+// The ideal.II library is free software; you can use it, redistribute
+// it, and/or modify it under the terms of the GNU Lesser General
+// Public License as published by the Free Software Foundation; either
+// version 3.0 of the License, or (at your option) any later version.
+// The full text of the license can be found in the file LICENSE.md at
+// the top level directory of ideal.II.
+//
+// ---------------------------------------------------------------------
+
+#ifndef __IDEAL_II_FE_FE_TOOLS_HH_
+#define __IDEAL_II_FE_FE_TOOLS_HH_
+
+namespace idealii::slab::FETools
+{
+    template void
+    interpolate_space<2,dealii::Vector<double>> (
+      const idealii::slab::DoFHandler<2> & dof1,
+      const dealii::Vector<double> & u1,
+      const idealii::slab::DoFHandler<2> & dof2,
+      dealii::Vector<double> & u2);
+
+    template void
+    interpolate_space<3,dealii::Vector<double>> (
+      const idealii::slab::DoFHandler<3> & dof1,
+      const dealii::Vector<double> & u1,
+      const idealii::slab::DoFHandler<3> & dof2,
+      dealii::Vector<double> & u2);
+
+    template void
+    interpolate_space<2,dealii::Vector<double>> (
+      const idealii::slab::DoFHandler<2> & dof1,
+      const dealii::Vector<double> & u1,
+      const idealii::slab::DoFHandler<2> & dof2,
+      const dealii::AffineConstraints<double> & constraints,
+      dealii::Vector<double> & u2);
+
+    template void
+    interpolate_space<3,dealii::Vector<double>> (
+      const idealii::slab::DoFHandler<3> & dof1,
+      const dealii::Vector<double> & u1,
+      const idealii::slab::DoFHandler<3> & dof2,
+      const dealii::AffineConstraints<double> & constraints,
+      dealii::Vector<double> & u2);
+
+    template void
+    interpolate_time<2,dealii::Vector<double>> (
+      const idealii::slab::DoFHandler<2> & dof1,
+      const dealii::Vector<double> & u1,
+      const idealii::slab::DoFHandler<2> & dof2,
+      dealii::Vector<double> & u2);
+
+    template void
+    interpolate_time<3,dealii::Vector<double>> (
+      const idealii::slab::DoFHandler<3> & dof1,
+      const dealii::Vector<double> & u1,
+      const idealii::slab::DoFHandler<3> & dof2,
+      dealii::Vector<double> & u2);
+
+    template void
+    interpolate_time<2,dealii::Vector<double>> (
+      const idealii::slab::DoFHandler<2> & dof1,
+      const dealii::Vector<double> & u1,
+      const idealii::slab::DoFHandler<2> & dof2,
+      const dealii::AffineConstraints<double> & constraints,
+      dealii::Vector<double> & u2);
+
+    template void
+    interpolate_time<3,dealii::Vector<double>> (
+      const idealii::slab::DoFHandler<3> & dof1,
+      const dealii::Vector<double> & u1,
+      const idealii::slab::DoFHandler<3> & dof2,
+      const dealii::AffineConstraints<double> & constraints,
+      dealii::Vector<double> & u2);
+//
+//    template void
+//    interpolate<2,dealii::Vector<double>> (
+//      const idealii::slab::DoFHandler<2> & dof1,
+//      const dealii::Vector<double> & u1,
+//      const idealii::slab::DoFHandler<2> & dof2,
+//      dealii::Vector<double> & u2);
+//
+//    template void
+//    interpolate<3,dealii::Vector<double>> (
+//      const idealii::slab::DoFHandler<3> & dof1,
+//      const dealii::Vector<double> & u1,
+//      const idealii::slab::DoFHandler<3> & dof2,
+//      dealii::Vector<double> & u2);
+//
+//    template void
+//    interpolate<2,dealii::Vector<double>> (
+//      const idealii::slab::DoFHandler<2> & dof1,
+//      const dealii::Vector<double> & u1,
+//      const idealii::slab::DoFHandler<2> & dof2,
+//      const dealii::AffineConstraints<double> & constraints,
+//      dealii::Vector<double> & u2);
+//
+//    template void
+//    interpolate<3,dealii::Vector<double>> (
+//      const idealii::slab::DoFHandler<3> & dof1,
+//      const dealii::Vector<double> & u1,
+//      const idealii::slab::DoFHandler<3> & dof2,
+//      const dealii::AffineConstraints<double> & constraints,
+//      dealii::Vector<double> & u2);
+
+}
+
+#endif

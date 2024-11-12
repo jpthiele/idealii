@@ -13,4 +13,5 @@
 ##
 ## ---------------------------------------------------------------------
 add_idealii_sources(fe_dg.cc)
+add_idealii_sources(fe_tools.cc)
 add_idealii_sources(spacetime_fe_values.cc)

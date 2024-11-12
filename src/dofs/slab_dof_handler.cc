@@ -14,14 +14,15 @@
 // ---------------------------------------------------------------------
 
 #include <ideal.II/dofs/slab_dof_handler.hh>
+#include <memory>
 
 namespace idealii::slab
 {
     template<int dim>
     DoFHandler<dim>::DoFHandler ( Triangulation<dim> &tria )
     {
-        Assert( tria.spatial ().use_count () , dealii::ExcNotInitialized () );
-        Assert( tria.temporal ().use_count () , dealii::ExcNotInitialized () );
+        Assert( tria.spatial().use_count () , dealii::ExcNotInitialized () );
+        Assert( tria.temporal().use_count () , dealii::ExcNotInitialized () );
         _spatial_dof = std::make_shared<dealii::DoFHandler<dim>> ( *tria.spatial () );
         _temporal_dof = std::make_shared<dealii::DoFHandler<1>> ( *tria.temporal () );
         _locally_owned_dofs = dealii::IndexSet ();
@@ -30,8 +31,8 @@ namespace idealii::slab
     template<int dim>
     DoFHandler<dim>::DoFHandler ( slab::parallel::distributed::Triangulation<dim> &tria )
     {
-        Assert( tria.spatial ().use_count () , dealii::ExcNotInitialized () );
-        Assert( tria.temporal ().use_count () , dealii::ExcNotInitialized () );
+        Assert( tria.spatial().use_count () , dealii::ExcNotInitialized () );
+        Assert( tria.temporal().use_count () , dealii::ExcNotInitialized () );
         _spatial_dof = std::make_shared<dealii::DoFHandler<dim>> ( *tria.spatial () );
         _temporal_dof = std::make_shared<dealii::DoFHandler<1>> ( *tria.temporal () );
         _locally_owned_dofs = dealii::IndexSet ();
@@ -56,9 +57,21 @@ namespace idealii::slab
     }
 
     template<int dim>
+    std::shared_ptr<const dealii::DoFHandler<dim>> DoFHandler<dim>::spatial() const
+    {
+        return std::const_pointer_cast<const dealii::DoFHandler<dim>>(_spatial_dof);
+    }
+
+    template<int dim>
     std::shared_ptr<dealii::DoFHandler<1>> DoFHandler<dim>::temporal ()
     {
         return _temporal_dof;
+    }
+
+    template<int dim>
+    std::shared_ptr<const dealii::DoFHandler<1>> DoFHandler<dim>::temporal() const
+    {
+        return std::const_pointer_cast<const dealii::DoFHandler<1>>(_temporal_dof);
     }
 
     template<int dim>
@@ -85,37 +98,37 @@ namespace idealii::slab
     }
 
     template<int dim>
-    unsigned int DoFHandler<dim>::n_dofs_spacetime ()
+    unsigned int DoFHandler<dim>::n_dofs_spacetime() const
     {
         return _spatial_dof->n_dofs () * _temporal_dof->n_dofs ();
     }
 
     template<int dim>
-    unsigned int DoFHandler<dim>::n_dofs_space ()
+    unsigned int DoFHandler<dim>::n_dofs_space() const
     {
         return _spatial_dof->n_dofs ();
     }
 
     template<int dim>
-    unsigned int DoFHandler<dim>::n_dofs_time ()
+    unsigned int DoFHandler<dim>::n_dofs_time() const
     {
         return _temporal_dof->n_dofs ();
     }
 
     template<int dim>
-    unsigned int DoFHandler<dim>::dofs_per_cell_time ()
+    unsigned int DoFHandler<dim>::dofs_per_cell_time() const
     {
         return _temporal_dof->get_fe ().dofs_per_cell;
     }
 
     template<int dim>
-    typename spacetime::DG_FiniteElement<dim>::support_type DoFHandler<dim>::fe_support_type ()
+    typename spacetime::DG_FiniteElement<dim>::support_type DoFHandler<dim>::fe_support_type() const
     {
         return _fe_support_type;
     }
 
     template<int dim>
-    const dealii::IndexSet& DoFHandler<dim>::locally_owned_dofs ()
+    const dealii::IndexSet& DoFHandler<dim>::locally_owned_dofs() const
     {
         return _locally_owned_dofs;
     }

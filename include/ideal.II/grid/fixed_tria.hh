@@ -47,10 +47,12 @@ namespace idealii::spacetime::fixed
          */
         void generate (
                 std::shared_ptr<dealii::Triangulation<dim>> space_tria ,
-                unsigned int M , double t0 = 0. , double T = 1. );
+                unsigned int M , double t0 = 0. , double T = 1. )
+                override;
 
         void refine_global ( const unsigned int times_space = 1 ,
-                             const unsigned int times_time = 1 );
+                             const unsigned int times_time = 1 )
+                             override;
     };
 }
 
