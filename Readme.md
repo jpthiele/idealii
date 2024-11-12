@@ -21,23 +21,23 @@ Build status of the library against official deal.II docker images:
 
 
 # ideal.II an extension to deal.II for tensor-product space-time finite elements
-This library provides classes and functions to solve instationary partial differential equations by 
-using space-time finite elements i.e. finite elements in both time and space. 
-It heavily builds on the 1 to 3d finite element capabilities of [deal.II](www.dealii.org) 
+This library provides classes and functions to solve instationary partial differential equations by
+using space-time finite elements i.e. finite elements in both time and space.
+It heavily builds on the 1 to 3d finite element capabilities of [deal.II](www.dealii.org)
 so you should make yourself familiar with solving stationary problems with that library first.
 
 
 ## How to install ideal.II
 First you need to install deal.II by following the instructions on their [site](https://dealii.org/current/readme.html).
-If you plan on using parallel linear algebra and other advanced features of deal.II and ideal.II 
-you should use either the [cmake superbuild](www.github.com/jpthiele/dealii-cmake-superbuild) or [candi](www.github.com/dealii/candi). 
+If you plan on using parallel linear algebra and other advanced features of deal.II and ideal.II
+you should use either the [cmake superbuild](www.github.com/jpthiele/dealii-cmake-superbuild) or [candi](www.github.com/dealii/candi).
 Note down the installation directory of deal.II (for example ~/Software/dealii)
 
 The installation of ideal.II is based on CMake as well, the steps are as follows.
 
 1. Choose an installation directory for ideal.II (for example ~/Software/idealii)
 
-2. Open a console and go to a directory where you want to download the source files (e.g. ~/Downloads) and clone the repository 
+2. Open a console and go to a directory where you want to download the source files (e.g. ~/Downloads) and clone the repository
 
 ~~~~~
     cd ~/Downloads
@@ -46,16 +46,16 @@ The installation of ideal.II is based on CMake as well, the steps are as follows
 
 3. After cloning is finished execute the following commands (with the above directory examples write
   ~/Software/dealii instead of <path_to_your_deal_installation> and ~/Software/idealii instead of <path_to_install_idealii_in>
- 
+
 ~~~~~
-    cd idealii   
-    cmake -S. -Bbuild -DDEAL_II_DIR=<path_to_your_deal_installation> -DCMAKE_INSTALL_PREFIX=<path_to_install_idealii_in> 
+    cd idealii
+    cmake -S. -Bbuild -DDEAL_II_DIR=<path_to_your_deal_installation> -DCMAKE_INSTALL_PREFIX=<path_to_install_idealii_in>
     cmake --build build
     cmake --install build
 ~~~~~
 
 ## How to use ideal.II in your codes
-Take a look at one of the example steps and copy the CMakeLists.txt file from there into your project directory. 
+Take a look at one of the example steps and copy the CMakeLists.txt file from there into your project directory.
 Set the correct project name and sources and then call the following commands from your project directory.
 
 ~~~~~
@@ -63,17 +63,17 @@ Set the correct project name and sources and then call the following commands fr
     cmake --build build
 ~~~~~
 
-Then the executable will be inside the build subdirectory. 
+Then the executable will be inside the build subdirectory.
 
 ## How to cite ideal.II
 The software metapaper is currently in preparation. Once published the readme will be updated accordingly.
 
-If you write a paper using results obtained with the help of ideal.II, please cite the following reference: 
+If you write a paper using results obtained with the help of ideal.II, please cite the following reference:
 
-1. Jan Philipp Thiele, 
+1. Jan Philipp Thiele,
    ideal.II: a Galerkin space-time extension to the finite element library deal.II,
    preprint(2024), arXiv 2408.08840
-   
+
 ~~~~~
     @misc{idealII,
 	    archiveprefix = {arXiv},
@@ -84,16 +84,21 @@ If you write a paper using results obtained with the help of ideal.II, please ci
 	    year = {preprint(2024), \url{https://arxiv.org/abs/2408.08840}}
     }
 ~~~~~
-   
+
 2. Please also cite deal.II as explained [here](https://dealii.org/publications.html)
-    
+
 ## Documentation
 A full documentation including the underlying mathematics (WIP)
 can be found [here](https://instatdealii.github.io/idealii/dev).
 
-The doxygen API Reference of the library functions can be found 
+The doxygen API Reference of the library functions can be found
 [here](https://instatdealii.github.io/idealii/dev/doxygen).
 
-
-
- 
+## Contributions
+This project is currently in an 'implement what you need'-status,
+if you added new functionality for your projects feel free to reach out or open a pull request directly.
+### pre-commit
+A GitHub action will run to ensure all source code files are
+formatted correctly with clang-format.
+To add a check during `git commit` you can install [pre-commit](https://pre-commit.com/) and then call `pre-commit install`
+inside the main repo directory to activate formatting checks locally.
